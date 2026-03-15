@@ -31,6 +31,14 @@ export default function HomeScreen() {
     }
   };
 
+  const deleteTransaction = async (id: string) => {
+    const confirmed = window.confirm('Delete this transaction?');
+    if (!confirmed) return;
+    const updated = transactions.filter(t => t.id !== id);
+    setTransactions(updated);
+    await AsyncStorage.setItem('transactions', JSON.stringify(updated));
+  };
+
   const totalIncome = transactions
     .filter(t => t.type === 'income')
     .reduce((sum, t) => sum + parseFloat(t.amount), 0);
@@ -99,6 +107,11 @@ export default function HomeScreen() {
             item.type === 'income' ? styles.positive : styles.negative]}>
             {item.type === 'income' ? '+' : '-'}${parseFloat(item.amount).toFixed(2)}
           </Text>
+          <TouchableOpacity
+            style={styles.deleteBtn}
+            onPress={() => deleteTransaction(item.id)}>
+            <Text style={styles.deleteText}>🗑️</Text>
+          </TouchableOpacity>
         </View>
       ))}
 
@@ -132,7 +145,9 @@ const styles = StyleSheet.create({
   transactionInfo: { flex: 1 },
   transactionName: { color: '#fff', fontSize: 15, fontWeight: '600' },
   transactionDate: { color: '#666', fontSize: 12, marginTop: 2 },
-  transactionAmount: { fontSize: 16, fontWeight: 'bold' },
+  transactionAmount: { fontSize: 16, fontWeight: 'bold', marginRight: 10 },
   positive: { color: '#4caf50' },
   negative: { color: '#f44336' },
+  deleteBtn: { padding: 6 },
+  deleteText: { fontSize: 18 },
 });
