@@ -2,6 +2,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFocusEffect, useRouter } from 'expo-router';
 import { useCallback, useState } from 'react';
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { auth } from '../firebase';
 
 type Transaction = {
   id: string;
@@ -52,9 +53,14 @@ export default function HomeScreen() {
   return (
     <ScrollView style={styles.container}>
 
-      <View style={styles.header}>
-        <Text style={styles.greeting}>👋 Hello!</Text>
-        <Text style={styles.subtitle}>Your Financial Overview</Text>
+      <View style={styles.headerRow}>
+        <View>
+          <Text style={styles.greeting}>👋 Hello!</Text>
+          <Text style={styles.subtitle}>Your Financial Overview</Text>
+        </View>
+        <TouchableOpacity onPress={() => auth.signOut()} style={styles.logoutBtn}>
+          <Text style={styles.logoutText}>Logout</Text>
+        </TouchableOpacity>
       </View>
 
       <View style={styles.balanceCard}>
@@ -121,9 +127,11 @@ export default function HomeScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#0f0f1a', padding: 20 },
-  header: { marginTop: 50, marginBottom: 20 },
+  headerRow: { marginTop: 50, marginBottom: 20, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   greeting: { fontSize: 28, fontWeight: 'bold', color: '#fff' },
   subtitle: { fontSize: 14, color: '#888', marginTop: 4 },
+  logoutBtn: { backgroundColor: '#1a1a2e', borderRadius: 10, padding: 8 },
+  logoutText: { color: '#f44336', fontSize: 13, fontWeight: 'bold' },
   balanceCard: { backgroundColor: '#1a1a2e', borderRadius: 20, padding: 24, marginBottom: 24 },
   balanceLabel: { color: '#888', fontSize: 14 },
   balanceAmount: { color: '#fff', fontSize: 42, fontWeight: 'bold', marginVertical: 8 },
