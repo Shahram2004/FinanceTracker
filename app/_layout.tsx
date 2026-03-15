@@ -1,6 +1,7 @@
 import { Stack, useRouter, useSegments } from 'expo-router';
 import { onAuthStateChanged } from 'firebase/auth';
 import { useEffect, useState } from 'react';
+import { ThemeProvider } from '../context/ThemeContext';
 import { auth } from '../firebase';
 
 export default function RootLayout() {
@@ -28,12 +29,14 @@ export default function RootLayout() {
   }, [user, loading]);
 
   return (
-    <Stack screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="index" />
-      <Stack.Screen name="login" />
-      <Stack.Screen name="add-expense" />
-      <Stack.Screen name="charts" />
-      <Stack.Screen name="ai-advice" />
-    </Stack>
+    <ThemeProvider>
+      <Stack screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="index" />
+        <Stack.Screen name="login" />
+        <Stack.Screen name="add-expense" />
+        <Stack.Screen name="charts" />
+        <Stack.Screen name="ai-advice" />
+      </Stack>
+    </ThemeProvider>
   );
 }

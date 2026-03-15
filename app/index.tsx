@@ -2,6 +2,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFocusEffect, useRouter } from 'expo-router';
 import { useCallback, useState } from 'react';
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { useTheme } from '../context/ThemeContext';
 import { auth } from '../firebase';
 
 type Transaction = {
@@ -15,6 +16,7 @@ type Transaction = {
 
 export default function HomeScreen() {
   const router = useRouter();
+  const { colors, isDark, toggleTheme } = useTheme();
   const [transactions, setTransactions] = useState<Transaction[]>([]);
 
   useFocusEffect(
@@ -51,71 +53,74 @@ export default function HomeScreen() {
   const balance = totalIncome - totalExpenses;
 
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView style={[styles.container, { backgroundColor: colors.background }]}>
 
       <View style={styles.headerRow}>
         <View>
-          <Text style={styles.greeting}>👋 Hello!</Text>
-          <Text style={styles.subtitle}>Your Financial Overview</Text>
+          <Text style={[styles.greeting, { color: colors.text }]}>👋 Hello!</Text>
+          <Text style={[styles.subtitle, { color: colors.subtext }]}>Your Financial Overview</Text>
         </View>
-        <TouchableOpacity onPress={() => auth.signOut()} style={styles.logoutBtn}>
-          <Text style={styles.logoutText}>Logout</Text>
-        </TouchableOpacity>
+        <View style={styles.headerBtns}>
+          <TouchableOpacity onPress={toggleTheme} style={[styles.iconBtn, { backgroundColor: colors.card }]}>
+            <Text style={styles.iconBtnText}>{isDark ? '☀️' : '🌙'}</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => auth.signOut()} style={[styles.logoutBtn, { backgroundColor: colors.card }]}>
+            <Text style={styles.logoutText}>Logout</Text>
+          </TouchableOpacity>
+        </View>
       </View>
 
-      <View style={styles.balanceCard}>
-        <Text style={styles.balanceLabel}>Total Balance</Text>
-        <Text style={styles.balanceAmount}>${balance.toFixed(2)}</Text>
+      <View style={[styles.balanceCard, { backgroundColor: colors.card }]}>
+        <Text style={[styles.balanceLabel, { color: colors.subtext }]}>Total Balance</Text>
+        <Text style={[styles.balanceAmount, { color: colors.text }]}>${balance.toFixed(2)}</Text>
         <View style={styles.row}>
-          <View style={styles.incomeBox}>
-            <Text style={styles.boxLabel}>Income</Text>
-            <Text style={styles.incomeText}>+${totalIncome.toFixed(2)}</Text>
+          <View style={[styles.incomeBox, { backgroundColor: colors.incomeBox }]}>
+            <Text style={[styles.boxLabel, { color: colors.subtext }]}>Income</Text>
+            <Text style={[styles.incomeText, { color: colors.positive }]}>+${totalIncome.toFixed(2)}</Text>
           </View>
-          <View style={styles.expenseBox}>
-            <Text style={styles.boxLabel}>Expenses</Text>
-            <Text style={styles.expenseText}>-${totalExpenses.toFixed(2)}</Text>
+          <View style={[styles.expenseBox, { backgroundColor: colors.expenseBox }]}>
+            <Text style={[styles.boxLabel, { color: colors.subtext }]}>Expenses</Text>
+            <Text style={[styles.expenseText, { color: colors.negative }]}>-${totalExpenses.toFixed(2)}</Text>
           </View>
         </View>
       </View>
 
-      <Text style={styles.sectionTitle}>Quick Actions</Text>
+      <Text style={[styles.sectionTitle, { color: colors.text }]}>Quick Actions</Text>
       <View style={styles.row}>
-        <TouchableOpacity style={styles.actionBtn} onPress={() => router.push('/add-expense')}>
+        <TouchableOpacity style={[styles.actionBtn, { backgroundColor: colors.card }]} onPress={() => router.push('/add-expense')}>
           <Text style={styles.actionIcon}>➕</Text>
-          <Text style={styles.actionLabel}>Add Expense</Text>
+          <Text style={[styles.actionLabel, { color: colors.subtext }]}>Add Expense</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.actionBtn} onPress={() => router.push('/charts')}>
+        <TouchableOpacity style={[styles.actionBtn, { backgroundColor: colors.card }]} onPress={() => router.push('/charts')}>
           <Text style={styles.actionIcon}>📊</Text>
-          <Text style={styles.actionLabel}>View Report</Text>
+          <Text style={[styles.actionLabel, { color: colors.subtext }]}>View Report</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.actionBtn} onPress={() => router.push('/ai-advice')}>
+        <TouchableOpacity style={[styles.actionBtn, { backgroundColor: colors.card }]} onPress={() => router.push('/ai-advice')}>
           <Text style={styles.actionIcon}>🤖</Text>
-          <Text style={styles.actionLabel}>AI Advice</Text>
+          <Text style={[styles.actionLabel, { color: colors.subtext }]}>AI Advice</Text>
         </TouchableOpacity>
       </View>
 
-      <Text style={styles.sectionTitle}>Recent Transactions</Text>
+      <Text style={[styles.sectionTitle, { color: colors.text }]}>Recent Transactions</Text>
 
       {transactions.length === 0 && (
-        <View style={styles.emptyBox}>
-          <Text style={styles.emptyText}>No transactions yet!</Text>
-          <Text style={styles.emptySubtext}>Tap ➕ to add your first one</Text>
+        <View style={[styles.emptyBox, { backgroundColor: colors.card }]}>
+          <Text style={[styles.emptyText, { color: colors.text }]}>No transactions yet!</Text>
+          <Text style={[styles.emptySubtext, { color: colors.subtext }]}>Tap ➕ to add your first one</Text>
         </View>
       )}
 
       {[...transactions].reverse().slice(0, 10).map((item) => (
-        <View key={item.id} style={styles.transactionItem}>
+        <View key={item.id} style={[styles.transactionItem, { backgroundColor: colors.card }]}>
           <View style={styles.transactionInfo}>
-            <Text style={styles.transactionName}>{item.category} {item.note ? `— ${item.note}` : ''}</Text>
-            <Text style={styles.transactionDate}>{item.date}</Text>
+            <Text style={[styles.transactionName, { color: colors.text }]}>{item.category} {item.note ? `— ${item.note}` : ''}</Text>
+            <Text style={[styles.transactionDate, { color: colors.subtext }]}>{item.date}</Text>
           </View>
           <Text style={[styles.transactionAmount,
-            item.type === 'income' ? styles.positive : styles.negative]}>
+            item.type === 'income' ? { color: colors.positive } : { color: colors.negative }]}>
             {item.type === 'income' ? '+' : '-'}${parseFloat(item.amount).toFixed(2)}
           </Text>
-          <TouchableOpacity
-            style={styles.deleteBtn}
-            onPress={() => deleteTransaction(item.id)}>
+          <TouchableOpacity style={styles.deleteBtn} onPress={() => deleteTransaction(item.id)}>
             <Text style={styles.deleteText}>🗑️</Text>
           </TouchableOpacity>
         </View>
@@ -126,36 +131,36 @@ export default function HomeScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#0f0f1a', padding: 20 },
+  container: { flex: 1, padding: 20 },
   headerRow: { marginTop: 50, marginBottom: 20, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  greeting: { fontSize: 28, fontWeight: 'bold', color: '#fff' },
-  subtitle: { fontSize: 14, color: '#888', marginTop: 4 },
-  logoutBtn: { backgroundColor: '#1a1a2e', borderRadius: 10, padding: 8 },
+  greeting: { fontSize: 28, fontWeight: 'bold' },
+  subtitle: { fontSize: 14, marginTop: 4 },
+  headerBtns: { flexDirection: 'row', gap: 8 },
+  iconBtn: { borderRadius: 10, padding: 8 },
+  iconBtnText: { fontSize: 16 },
+  logoutBtn: { borderRadius: 10, padding: 8 },
   logoutText: { color: '#f44336', fontSize: 13, fontWeight: 'bold' },
-  balanceCard: { backgroundColor: '#1a1a2e', borderRadius: 20, padding: 24, marginBottom: 24 },
-  balanceLabel: { color: '#888', fontSize: 14 },
-  balanceAmount: { color: '#fff', fontSize: 42, fontWeight: 'bold', marginVertical: 8 },
+  balanceCard: { borderRadius: 20, padding: 24, marginBottom: 24 },
+  balanceLabel: { fontSize: 14 },
+  balanceAmount: { fontSize: 42, fontWeight: 'bold', marginVertical: 8 },
   row: { flexDirection: 'row', justifyContent: 'space-between' },
-  incomeBox: { backgroundColor: '#0d2b1f', borderRadius: 12, padding: 12, flex: 0.48 },
-  expenseBox: { backgroundColor: '#2b0d0d', borderRadius: 12, padding: 12, flex: 0.48 },
-  boxLabel: { color: '#888', fontSize: 12 },
-  incomeText: { color: '#4caf50', fontSize: 18, fontWeight: 'bold' },
-  expenseText: { color: '#f44336', fontSize: 18, fontWeight: 'bold' },
-  sectionTitle: { color: '#fff', fontSize: 18, fontWeight: 'bold', marginBottom: 12, marginTop: 8 },
-  actionBtn: { backgroundColor: '#1a1a2e', borderRadius: 16, padding: 16, alignItems: 'center', flex: 0.3 },
+  incomeBox: { borderRadius: 12, padding: 12, flex: 0.48 },
+  expenseBox: { borderRadius: 12, padding: 12, flex: 0.48 },
+  boxLabel: { fontSize: 12 },
+  incomeText: { fontSize: 18, fontWeight: 'bold' },
+  expenseText: { fontSize: 18, fontWeight: 'bold' },
+  sectionTitle: { fontSize: 18, fontWeight: 'bold', marginBottom: 12, marginTop: 8 },
+  actionBtn: { borderRadius: 16, padding: 16, alignItems: 'center', flex: 0.3 },
   actionIcon: { fontSize: 24 },
-  actionLabel: { color: '#aaa', fontSize: 11, marginTop: 6, textAlign: 'center' },
-  emptyBox: { backgroundColor: '#1a1a2e', borderRadius: 14, padding: 30, alignItems: 'center' },
-  emptyText: { color: '#fff', fontSize: 16, fontWeight: 'bold' },
-  emptySubtext: { color: '#666', fontSize: 13, marginTop: 6 },
-  transactionItem: { backgroundColor: '#1a1a2e', borderRadius: 14, padding: 16,
-    flexDirection: 'row', alignItems: 'center', marginBottom: 10 },
+  actionLabel: { fontSize: 11, marginTop: 6, textAlign: 'center' },
+  emptyBox: { borderRadius: 14, padding: 30, alignItems: 'center' },
+  emptyText: { fontSize: 16, fontWeight: 'bold' },
+  emptySubtext: { fontSize: 13, marginTop: 6 },
+  transactionItem: { borderRadius: 14, padding: 16, flexDirection: 'row', alignItems: 'center', marginBottom: 10 },
   transactionInfo: { flex: 1 },
-  transactionName: { color: '#fff', fontSize: 15, fontWeight: '600' },
-  transactionDate: { color: '#666', fontSize: 12, marginTop: 2 },
+  transactionName: { fontSize: 15, fontWeight: '600' },
+  transactionDate: { fontSize: 12, marginTop: 2 },
   transactionAmount: { fontSize: 16, fontWeight: 'bold', marginRight: 10 },
-  positive: { color: '#4caf50' },
-  negative: { color: '#f44336' },
   deleteBtn: { padding: 6 },
   deleteText: { fontSize: 18 },
 });
