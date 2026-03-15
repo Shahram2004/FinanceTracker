@@ -36,6 +36,7 @@ export default function RootLayout() {
         <Stack.Screen name="add-expense" />
         <Stack.Screen name="charts" />
         <Stack.Screen name="ai-advice" />
+        <Stack.Screen name="edit-transaction" />
       </Stack>
     </ThemeProvider>
   );

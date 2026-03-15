@@ -120,6 +120,9 @@ export default function HomeScreen() {
             item.type === 'income' ? { color: colors.positive } : { color: colors.negative }]}>
             {item.type === 'income' ? '+' : '-'}${parseFloat(item.amount).toFixed(2)}
           </Text>
+          <TouchableOpacity style={styles.editBtn} onPress={() => router.push(`/edit-transaction?id=${item.id}`)}>
+            <Text style={styles.editText}>✏️</Text>
+          </TouchableOpacity>
           <TouchableOpacity style={styles.deleteBtn} onPress={() => deleteTransaction(item.id)}>
             <Text style={styles.deleteText}>🗑️</Text>
           </TouchableOpacity>
@@ -161,6 +164,8 @@ const styles = StyleSheet.create({
   transactionName: { fontSize: 15, fontWeight: '600' },
   transactionDate: { fontSize: 12, marginTop: 2 },
   transactionAmount: { fontSize: 16, fontWeight: 'bold', marginRight: 10 },
+  editBtn: { padding: 6 },
+  editText: { fontSize: 18 },
   deleteBtn: { padding: 6 },
   deleteText: { fontSize: 18 },
 });
